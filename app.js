@@ -1,18 +1,20 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const request = require('request');
-const request = require('request');
+const express = require("express");
+const bodyParser = require("body-parser");
 const https = require("https");
-
 const app = express();
+const mailchimp = require('@mailchimp/mailchimp_marketing');
+const { response } = require("express");
+const { Console } = require("console");
+
+
+mailchimp.setConfig({
+    apiKey: "ff7fd1c42b78402ca435414a2b168c16-us7",
+    server: "us7"
+  });
+
 
 app.use('*/css',express.static('public/css'));
 app.use('*/images',express.static('public/images'));
-
-
-
-
-
 app.use(bodyParser.urlencoded({ extended: true }));
 
 
@@ -22,63 +24,51 @@ app.get("/", function (req, res) {
 });
 
 app.post("/", function(req, res){
-    const fistname = req.body.fname;
-    const secondname = req.body.sname;
-    const email = req.body.email;
 
-    console.log(fistname, secondname, email);
+    if (response.statusCode == 200){
+        res.sendFile(__dirname + "/success.html");
+        console.log("submitted succesfuly");
 
-    const data ={
-        members: [
-            {
-              email_address: email,
-              status: "subscribed",
-              merge_fields : {
-                FNAME: firstname,
-                LNAME: secondname
-              }
-    
-            }
-    
-         ]
-        
-    };
-
-    const jsonData = JSON.stringify(data);
-    const url = "https://us7.api.mailchimp.com/3.0/lists/220f6aac05";
-    const options = {
-        method:"POST",
-        auth: "aziza:7570dd6b3545e48f34fda03e01736fec-us7 "
     }
 
-    const request = https.request(url, options, function(response){
-        response.on("data", function(data){
-            console.log(JSON.parse(data));
-        })
+    else{
+        Console.log("faled");
 
-
-    })
-
- 
-     request.write(jsonData);
-     request.end();
-
-});
-
-
-        
+    }
     
 
 
+    
+ 
+    const listId = "220f6aac05";
+    const subscribingUser = {
+        firstName: req.body.fname,
+        lastName: req.body.sname,
+        email: req.body.email
+    };
+   
+    async function run() {
+        const response = await mailchimp.lists.addListMember(listId, {
+          email_address: subscribingUser.email,
+          status: "subscribed",
+          merge_fields: {
+            FNAME: subscribingUser.firstName,
+            LNAME: subscribingUser.lastName
+          }
 
+          
+        });
+   
+        console.log(
+          `Successfully added contact as an audience member. The contact's id is ${response.id}.`
+        );
+    }
+   
+    run();
+  })
 
-
-app.listen(3000, function () {
+app.listen(process.env.PORT || 3000, function () {
     console.log("Server started on port 3000")
 });
 
-
-
-//7570dd6b3545e48f34fda03e01736fec-us7
-
-//220f6aac05
+//ff7fd1c42b78402ca435414a2b168c16-us7
