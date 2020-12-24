@@ -67,8 +67,8 @@ app.post("/", function(req, res){
     run();
   })
 
-app.listen(process.env.PORT || 3000, function () {
+app.listen(process.env.PORT, function () {
     console.log("Server started on port 3000")
 });
 
-//ff7fd1c42b78402ca435414a2b168c16-us7
+//ff7fd1c42b78402ca435414a2b168c16-ut
