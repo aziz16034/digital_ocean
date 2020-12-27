@@ -23,6 +23,12 @@ app.get("/", function (req, res) {
     res.sendFile(__dirname + "/signup.html");
 });
 
+
+app.get("/contact_us", function (req, res) {
+
+    res.sendFile(__dirname + "/contact.html");
+});
+
 app.post("/", function(req, res){
 
     if (response.statusCode == 200){
@@ -55,6 +61,7 @@ app.post("/", function(req, res){
             FNAME: subscribingUser.firstName,
             LNAME: subscribingUser.lastName
           }
+          
 
           
         });
@@ -63,9 +70,18 @@ app.post("/", function(req, res){
           `Successfully added contact as an audience member. The contact's id is ${response.id}.`
         );
     }
+
+
    
     run();
   })
+
+  app.post("/contact_us", function(req, res){
+      res.send("jjifo");
+
+
+  });
+
 
 app.listen(3000, function () {
     console.log("Server started on port 3000")
